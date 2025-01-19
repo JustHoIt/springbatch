@@ -1,4 +1,4 @@
-package ecommerce.batch.dto;
+package ecommerce.batch.dto.product.upload;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

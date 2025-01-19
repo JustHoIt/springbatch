@@ -1,7 +1,7 @@
 package ecommerce.batch.util;
 
 import ecommerce.batch.domain.product.ProductStatus;
-import ecommerce.batch.dto.ProductUploadCsvRow;
+import ecommerce.batch.dto.product.upload.ProductUploadCsvRow;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -15,7 +15,7 @@ public class ProductGenerator {
   private static final Random RANDOM = new Random();
 
   public static void main(String[] args) {
-    String csvFilePath = "data/random_products.csv";
+    String csvFilePath = "data/random_for_products.csv";
     int recordCount = 10_000_000;
 
     try (FileWriter fileWriter = new FileWriter(csvFilePath); CSVPrinter printer = new CSVPrinter(
