@@ -8,6 +8,8 @@ build/
 ### DATA ###
 /ecommerce-app-infra/data/
 /ecommerce-app-infra/docker-compose.yml
+./data/
+./sql/
 
 
 ### STS ###
