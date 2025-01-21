@@ -47,11 +47,12 @@ public class ProductUploadJobConfiguration {
   }
 
   @Bean
-  public Step productUploadPartitionStep(JobRepository jobRepository, Step productUploadStep,
-      SplitFilePartitioner splitFilePartitioner, PartitionHandler partitionHandler) {
+  public Step productUploadPartitionStep(PartitionHandler filePartitionHandler,
+      Step productUploadStep,
+      JobRepository jobRepository, SplitFilePartitioner splitFilePartitioner) {
     return new StepBuilder("productUploadPartitionStep", jobRepository)
         .partitioner(productUploadStep.getName(), splitFilePartitioner)
-        .partitionHandler(partitionHandler)
+        .partitionHandler(filePartitionHandler)
         .allowStartIfComplete(true)
         .build();
   }

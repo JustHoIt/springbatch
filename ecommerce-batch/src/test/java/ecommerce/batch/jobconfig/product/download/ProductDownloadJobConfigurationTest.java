@@ -47,7 +47,7 @@ class ProductDownloadJobConfigurationTest extends BaseBatchIntergrationTest {
     JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
 
     assertAll(
-        () -> assertThat(Files.readString(Path.of(outputfile.getPath()))).isEqualTo(
+        () -> assertThat( Files.readString(Path.of(outputfile.getPath()))).isEqualTo(
             Files.readString(Path.of(expectedResource.getFile().getPath()))),
         () -> assertJobCompleted(jobExecution));
 
@@ -76,6 +76,8 @@ class ProductDownloadJobConfigurationTest extends BaseBatchIntergrationTest {
     return new JobParametersBuilder()
         .addJobParameter("outputFilePath",
             new JobParameter<>(outputfile.getPath(), String.class, false))
+        .addJobParameter("gridSize",
+            new JobParameter<>(3, Integer.class, false))
         .toJobParameters();
   }
 
