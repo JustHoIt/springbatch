@@ -25,7 +25,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Table(name = "order")
+@Table(name = "orders")
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -36,7 +36,6 @@ public class Order {
   private Long orderId;
 
   private Timestamp orderDate;
-
   private Long customerId;
 
   @Enumerated(EnumType.STRING)
@@ -66,7 +65,7 @@ public class Order {
     payment = Payment.createPayment(paymentMethod, calculateTotalAmount(), this);
   }
 
-  private Integer calculateTotalAmount() {
+  public int calculateTotalAmount() {
     return orderItems.stream()
         .mapToInt(item -> item.getUnitPrice() * item.getQuantity()).sum();
   }
@@ -94,7 +93,7 @@ public class Order {
 
 
   public void complete() {
-    if(orderStatus != OrderStatus.PROCESSING) {
+    if (orderStatus != OrderStatus.PROCESSING) {
       throw new IllegalOrderStateException("처리 중인 주문만 완료 할 수 있습니다.");
     }
     if (!isPaymentSuccess()) {
@@ -104,10 +103,33 @@ public class Order {
   }
 
   public void cancel() {
-    if(orderStatus == OrderStatus.COMPLETED) {
+    if (orderStatus == OrderStatus.COMPLETED) {
       throw new IllegalOrderStateException("완료된 주문은 취소할 수 없습니다.");
     }
     payment.cancel();
     orderStatus = OrderStatus.CANCELLED;
   }
+
+  public Long countProducts() {
+    return (long) orderItems.size();
+  }
+
+  public Long calculateTotalItemQuantity() {
+    return orderItems.stream()
+        .mapToLong(OrderItem::getQuantity)
+        .sum();
+  }
+
+  public Long getPaymentId() {
+    return payment.getPaymentId();
+  }
+
+  public PaymentMethod getPaymentMethod() {
+    return payment.getPaymentMethod();
+  }
+
+  public Timestamp getPaymentDate() {
+    return payment.getPaymentDate();
+  }
+
 }

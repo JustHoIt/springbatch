@@ -37,7 +37,7 @@ public class Payment {
   @Enumerated(EnumType.STRING)
   private PaymentStatus paymentStatus;
 
-  private Timestamp timestamp;
+  private Timestamp paymentDate;
   private Integer amount;
 
 

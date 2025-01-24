@@ -1,0 +1,12 @@
+###
+POST http://localhost:8080/v1/orders
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "orderItems": [{
+    "productId": "1737399033094_32a50fda-4059-431e-a5af-baaba1aab6a3",
+    "quantity": 2
+  }],
+  "paymentMethod": "CREDIT_CARD"
+}
