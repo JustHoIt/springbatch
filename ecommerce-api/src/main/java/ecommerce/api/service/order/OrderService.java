@@ -1,6 +1,7 @@
 package ecommerce.api.service.order;
 
 import ecommerce.api.domain.order.Order;
+import ecommerce.api.domain.order.OrderItem;
 import ecommerce.api.domain.order.OrderRepository;
 import ecommerce.api.domain.payment.PaymentMethod;
 import ecommerce.api.service.product.ProductResult;
@@ -35,6 +36,53 @@ public class OrderService {
 
   private OrderResult save(Order order) {
     return OrderResult.from(orderRepository.save(order));
+  }
+
+
+  @Transactional
+  public OrderResult completePayment(Long orderId, boolean success) {
+    Order order = findById(orderId);
+
+    order.completePayment(success);
+    decreaseStock(success, order);
+
+    return save(order);
+  }
+
+  private Order findById(Long orderId) {
+    Order order = orderRepository.findById(orderId)
+        .orElseThrow(() -> new OrderNotFoundException(orderId));
+    return order;
+  }
+
+  @Transactional
+  public OrderResult completeOrder(Long orderId) {
+    Order order = findById(orderId);
+    order.complete();
+    return save(order);
+  }
+
+  @Transactional
+  public OrderResult cancelOrder(Long orderId) {
+    Order order = findById(orderId);
+    order.cancel();
+    increaseStock(order);
+
+    return save(order);
+  }
+
+  private void increaseStock(Order order) {
+    for (OrderItem orderItem : order.getOrderItems()) {
+      productService.increaseStock(orderItem.getProductId(), orderItem.getQuantity());
+    }
+  }
+
+  private void decreaseStock(boolean success, Order order) {
+    if (success) {
+      for (OrderItem orderItem : order.getOrderItems()) {
+        productService.decreaseStock(orderItem.getProductId(), orderItem.getQuantity());
+      }
+    }
   }
 
 }
