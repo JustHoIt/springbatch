@@ -8,6 +8,8 @@ build/
 ### DATA ###
 /ecommerce-app-infra/data/
 /ecommerce-app-infra/docker-compose.yml
+*.sql
+*.csv
 
 
 ### STS ###
@@ -30,6 +32,7 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+
 
 ### NetBeans ###
 /nbproject/private/

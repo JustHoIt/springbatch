@@ -1,0 +1,48 @@
+### 주문
+POST http://localhost:8080/v1/orders
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "orderItems": [{
+    "productId": "1737399033094_32a50fda-4059-431e-a5af-baaba1aab6a3",
+    "quantity": 2
+  }],
+  "paymentMethod": "CREDIT_CARD"
+}
+
+
+### 결제 완료
+POST http://localhost:8080/v1/orders/12/payments
+Content-Type: application/json
+
+{
+  "success": true
+}
+
+### 결제 실패
+POST http://localhost:8080/v1/orders/13/payments
+Content-Type: application/json
+
+{
+  "success": false
+}
+
+
+
+### 주문 완료
+POST http://localhost:8080/v1/orders/12/complete
+Content-Type: application/json
+
+{
+  "success": false
+}
+
+
+### 주문 취소
+POST http://localhost:8080/v1/orders/13/cancel
+Content-Type: application/json
+
+{
+  "success": false
+}
