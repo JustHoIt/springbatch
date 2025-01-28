@@ -24,4 +24,9 @@ public class OrderRequest {
         .map(item -> OrderItemCommand.of(item.getQuantity(), item.getProductId()))
         .collect(Collectors.toList());
   }
+
+  public static OrderRequest of(Long customerId, List<OrderItemRequest> orderItems,
+      PaymentMethod paymentMethod) {
+    return new OrderRequest(customerId, orderItems, paymentMethod);
+  }
 }

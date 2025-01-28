@@ -11,8 +11,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class OrderItemRequest {
 
-  private Integer quantity;
   private String productId;
+  private Integer quantity;
+
+  public static OrderItemRequest of(String productId, int quantity) {
+    return new OrderItemRequest(productId, quantity);
+  }
 
 
 }

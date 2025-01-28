@@ -6,6 +6,7 @@ import ecommerce.api.domain.order.OrderRepository;
 import ecommerce.api.domain.payment.PaymentMethod;
 import ecommerce.api.service.product.ProductResult;
 import ecommerce.api.service.product.ProductService;
+import ecommerce.api.service.transaction.TransactionService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ public class OrderService {
 
   private final OrderRepository orderRepository;
   private final ProductService productService;
+  private final TransactionService transactionService;
 
   @Transactional
   public OrderResult order(Long customerId, List<OrderItemCommand> orderItems,
