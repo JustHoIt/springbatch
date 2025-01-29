@@ -13,34 +13,31 @@ import org.springframework.stereotype.Service;
 public class TransactionService {
 
   protected static Logger logger = LoggerFactory.getLogger(TransactionService.class);
-  private static final String NA = "N/A";
 
   public void logTransaction(TransactionType transactionType, TransactionStatus transactionStatus,
-      String message, OrderResult orderResult) {
+      String message, OrderResult order) {
     try {
-      putMdc(transactionType, transactionStatus, orderResult);
+      putMdc(transactionType, transactionStatus, order);
       log(transactionStatus, message);
     } finally {
       MDC.clear();
     }
   }
 
-  // MDC: MAPPED Diagnostic Context
-  private void putMdc(TransactionType transactionType, TransactionStatus transactionStatus
-      , OrderResult orderResult) {
-    Optional.ofNullable(orderResult)
+  private void putMdc(TransactionType transactionType, TransactionStatus transactionStatus,
+      OrderResult order) {
+    Optional.ofNullable(order)
         .ifPresentOrElse(this::putOrder, this::putNAOrder);
     putTransaction(transactionType, transactionStatus);
-    putOrder(orderResult);
   }
 
-  private void putOrder(OrderResult orderResult) {
-    MDC.put("orderId", orderResult.getOrderId().toString());
-    MDC.put("customerId", orderResult.getCustomerId().toString());
-    MDC.put("totalAmount", orderResult.getTotalAmount().toString());
-    MDC.put("paymentMethod", orderResult.getPaymentMethod().toString());
-    MDC.put("productCount", orderResult.getProductCount().toString());
-    MDC.put("totalItemQuantity", orderResult.getTotalItemQuantity().toString());
+  private void putOrder(OrderResult order) {
+    MDC.put("orderId", order.getOrderId().toString());
+    MDC.put("customerId", order.getCustomerId().toString());
+    MDC.put("totalAmount", String.valueOf(order.getTotalAmount()));
+    MDC.put("paymentMethod", order.getPaymentMethod().toString());
+    MDC.put("productCount", order.getProductCount().toString());
+    MDC.put("totalItemQuantity", order.getTotalItemQuantity().toString());
   }
 
   private void putNAOrder() {
@@ -54,8 +51,8 @@ public class TransactionService {
 
   private void putTransaction(TransactionType transactionType,
       TransactionStatus transactionStatus) {
-    MDC.put("TransactionType", transactionType.name());
-    MDC.put("TransactionStatus", transactionStatus.name());
+    MDC.put("transactionType", transactionType.name());
+    MDC.put("transactionStatus", transactionStatus.name());
   }
 
   private void log(TransactionStatus transactionStatus, String message) {
