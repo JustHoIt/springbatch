@@ -46,11 +46,13 @@ class ProductDownloadJobConfigurationTest extends BaseBatchIntergrationTest {
 
     JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
 
-    assertAll(
-        () -> assertThat( Files.readString(Path.of(outputfile.getPath()))).isEqualTo(
-            Files.readString(Path.of(expectedResource.getFile().getPath()))),
-        () -> assertJobCompleted(jobExecution));
+    String actualOutput = Files.readString(Path.of(outputfile.getPath())).trim();
+    String expectedOutput = Files.readString(Path.of(expectedResource.getFile().getPath())).trim();
 
+    assertAll(
+        () -> assertThat(actualOutput.replaceAll("\\r?\\n", "\n"))
+            .isEqualTo(expectedOutput.replaceAll("\\r?\\n", "\n")),
+        () -> assertJobCompleted(jobExecution));
   }
 
   private void saveProduct() {

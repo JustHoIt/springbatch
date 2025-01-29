@@ -7,7 +7,6 @@ build/
 
 ### DATA ###
 /ecommerce-app-infra/data/
-/ecommerce-app-infra/docker-compose.yml
 *.sql
 *.csv
 

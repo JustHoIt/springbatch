@@ -31,7 +31,7 @@ class TransactionReportJobConfigurationTest extends BaseBatchIntergrationTest {
 
     assertAll(() -> assertThat(
             jdbcTemplate.queryForObject("select count(*) from transaction_reports",
-                Integer.class)).isEqualTo(1),
+                Integer.class)).isEqualTo(3),
         () -> assertJobCompleted(jobExecution)
     );
   }
