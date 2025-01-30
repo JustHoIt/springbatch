@@ -30,7 +30,7 @@ public class OrderRequester {
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
   public static void main(String[] args) {
-    int maxWorkers = Runtime.getRuntime().availableProcessors() * 2;
+    int maxWorkers = 20;
     ExecutorService executor = Executors.newFixedThreadPool(maxWorkers);
     List<CompletableFuture<Void>> futures = new ArrayList<>();
 
@@ -38,8 +38,6 @@ public class OrderRequester {
       int page = 0;
       int size = 1000;
       boolean hasNextPage = true;
-
-      System.out.println("==========================" + page + "==========================");
 
       while (hasNextPage && page < 10000) {
         String productsJson = fetchProducts(page, size);
@@ -102,8 +100,7 @@ public class OrderRequester {
     System.out.println("상품 ID " + productId + "로 주문 생성 중...");
     try {
       String requestBody = OBJECT_MAPPER.writeValueAsString(orderRequest);
-      HttpResponse<String> response = (HttpResponse<String>) sendPostRequestAsync(ORDERS_URL,
-          requestBody);
+      HttpResponse<String> response = sendPostRequest(ORDERS_URL, requestBody);
       if (response.statusCode() == 200) {
         OrderResponse orderResponse = OBJECT_MAPPER.readValue(response.body(), OrderResponse.class);
         System.out.println("상품 ID " + productId + "로 주문이 성공적으로 생성되었습니다.");
@@ -123,8 +120,7 @@ public class OrderRequester {
     System.out.println("주문 ID " + orderId + "에 대한 결제 완료 중...");
     try {
       String requestBody = OBJECT_MAPPER.writeValueAsString(paymentRequest);
-      HttpResponse<String> response = (HttpResponse<String>) sendPostRequestAsync(
-          ORDERS_URL + "/" + orderId + "/payment",
+      HttpResponse<String> response = sendPostRequest(ORDERS_URL + "/" + orderId + "/payment",
           requestBody);
       if (response.statusCode() == 200) {
         if (isSuccess) {
@@ -143,8 +139,7 @@ public class OrderRequester {
   private static void completeOrder(Long orderId) {
     System.out.println("주문 ID " + orderId + "를 완료 중...");
     try {
-      HttpResponse<String> response = (HttpResponse<String>) sendPostRequestAsync(
-          ORDERS_URL + "/" + orderId + "/complete", "");
+      HttpResponse<String> response = sendPostRequest(ORDERS_URL + "/" + orderId + "/complete", "");
       if (response.statusCode() == 200) {
         System.out.println("주문 ID " + orderId + "가 성공적으로 완료되었습니다.");
       } else {
@@ -158,8 +153,7 @@ public class OrderRequester {
   private static void cancelOrder(Long orderId) {
     System.out.println("주문 ID " + orderId + "를 취소 중...");
     try {
-      HttpResponse<String> response = (HttpResponse<String>) sendPostRequestAsync(
-          ORDERS_URL + "/" + orderId + "/cancel", "");
+      HttpResponse<String> response = sendPostRequest(ORDERS_URL + "/" + orderId + "/cancel", "");
       if (response.statusCode() == 200) {
         System.out.println("주문 ID " + orderId + "가 성공적으로 취소되었습니다.");
       } else {
@@ -174,14 +168,13 @@ public class OrderRequester {
     return RANDOM.nextInt(1000) + 1;
   }
 
-  private static CompletableFuture<HttpResponse<String>> sendPostRequestAsync(String url,
-      String body)
+  private static HttpResponse<String> sendPostRequest(String url, String body)
       throws IOException, InterruptedException {
     HttpRequest request = HttpRequest.newBuilder()
         .uri(URI.create(url))
         .header("Content-Type", "application/json")
         .POST(HttpRequest.BodyPublishers.ofString(body))
         .build();
-    return HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    return HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
   }
 }
