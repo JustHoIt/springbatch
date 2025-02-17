@@ -53,19 +53,85 @@ create table order_items
     order_id      bigint      not null
 );
 
-create index idx_order_items_order_id on order_items(order_id);
-create index idx_order_items_product_id on order_items(product_id);
+create index idx_order_items_order_id on order_items (order_id);
+create index idx_order_items_product_id on order_items (product_id);
 
-CREATE TABLE transaction_reports (
-    transaction_date date,
-    transaction_type varchar(50) not null,
-    transaction_count bigint not null,
-    total_amount bigint not null,
-    customer_count bigint not null,
-    order_count bigint not null,
-    payment_method_count bigint not null,
-    avg_product_count decimal(15, 0) not null,
-    total_item_quantity bigint not null,
+CREATE TABLE transaction_reports
+(
+    transaction_date     date,
+    transaction_type     varchar(50)    not null,
+    transaction_count    bigint         not null,
+    total_amount         bigint         not null,
+    customer_count       bigint         not null,
+    order_count          bigint         not null,
+    payment_method_count bigint         not null,
+    avg_product_count    decimal(15, 0) not null,
+    total_item_quantity  bigint         not null,
     primary key (transaction_date, transaction_type)
 );
 
+
+truncate transaction_reports;
+
+
+CREATE TABLE brand_reports
+(
+    stat_date              date           not null,
+    brand                  varchar(255)   not null,
+    product_count          integer        not null,
+    avg_sales_price        decimal(15, 0) not null,
+    max_sales_price        decimal(15, 0) not null,
+    min_sales_price        decimal(15, 0) not null,
+    total_stock_quantity   integer        not null,
+    avg_stock_quantity     decimal(15, 0) not null,
+    potential_sales_amount decimal(20, 0) not null,
+    primary key (stat_date, brand)
+);
+
+CREATE TABLE category_reports
+(
+    stat_date              date           not null,
+    category               varchar(255)   not null,
+    product_count          integer        not null,
+    avg_sales_price        decimal(15, 0) not null,
+    max_sales_price        decimal(15, 0) not null,
+    min_sales_price        decimal(15, 0) not null,
+    total_stock_quantity   integer        not null,
+    potential_sales_amount decimal(20, 0) not null,
+    primary key (stat_date, category)
+);
+
+CREATE TABLE manufacturer_reports
+(
+    stat_date              date           not null,
+    manufacturer           varchar(255)   not null,
+    product_count          integer        not null,
+    avg_sales_price        decimal(15, 0) not null,
+    potential_sales_amount decimal(20, 0) not null,
+    primary key (stat_date, manufacturer)
+);
+
+CREATE TABLE product_status_reports
+(
+    stat_date          date           not null,
+    product_status     varchar(50)   not null,
+    product_count      integer        not null,
+    avg_stock_quantity decimal(15, 0) not null,
+    primary key (stat_date, product_status)
+);
+
+
+select brand,
+       count(*)                          product_count,
+       avg(sales_price)                  avg_sales_price,
+       max(sales_price)                  max_sales_price,
+       min(sales_price)                  min_sales_price,
+       sum(stock_quantity)               total_stock_quantiy,
+       avg(stock_quantity)               avg_stock_quantity,
+       sum(sales_price * stock_quantity) potentail_sales_amount
+from products
+group by brand;
+
+
+insert into brand_reports(
+    stat_date, brand, product_count, avg_sales_price, max_sales_price, min_sales_price, total_stock_quantity, avg_stock_quantity, potential_sales_amount)
