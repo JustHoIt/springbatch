@@ -1,39 +1,35 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <pattern>%-4relative [%thread] %-5level %logger{35} -%kvp- %msg %n</pattern>
     </encoder>
   </appender>
 
-
-  <!--  ROLLING -->
   <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>logs/transacation.log</file>
+    <file>logs/transaction.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>logs/app.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <fileNamePattern>logs/transaction.%d{yyyy-MM-dd}.log</fileNamePattern>
       <maxHistory>30</maxHistory>
-      <totalSizeCap>3GB</totalSizeCap>
     </rollingPolicy>
-
     <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
       <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
         <timestampFormat>yyyy-MM-dd' 'HH:mm:ss.SSS</timestampFormat>
-        <appendLineSeperator>true</appendLineSeperator>
-        <jsonFormmmter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+        <appendLineSeparator>true</appendLineSeparator>
+        <jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
           <prettyPrint>false</prettyPrint>
-        </jsonFormmmter>
+        </jsonFormatter>
       </layout>
     </encoder>
   </appender>
-
 
   <root level="INFO">
     <appender-ref ref="STDOUT"/>
   </root>
 
   <logger name="ecommerce.api.service.transaction.TransactionService" level="INFO">
-    <appender-ref ref="JSON_FILE" />
+    <appender-ref ref="JSON_FILE"/>
   </logger>
 
 </configuration>

@@ -31,7 +31,7 @@ class TransactionReportJobConfigurationTest extends BaseBatchIntergrationTest {
 
     assertAll(() -> assertThat(
             jdbcTemplate.queryForObject("select count(*) from transaction_reports",
-                Integer.class)).isEqualTo(1),
+                Integer.class)).isEqualTo(3),
         () -> assertJobCompleted(jobExecution)
     );
   }
@@ -40,6 +40,8 @@ class TransactionReportJobConfigurationTest extends BaseBatchIntergrationTest {
     return new JobParametersBuilder()
         .addJobParameter("inputFilePath",
             new JobParameter<>(resource.getFile().getPath(), String.class, false))
+        .addJobParameter("gridSize",
+            new JobParameter<>(3, Integer.class, false))
         .toJobParameters();
   }
 }

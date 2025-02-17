@@ -20,7 +20,6 @@ public class TransactionReportMapRepository {
       r.add(report);
       return r;
     });
-
   }
 
   private static String getKey(TransactionReport report) {
