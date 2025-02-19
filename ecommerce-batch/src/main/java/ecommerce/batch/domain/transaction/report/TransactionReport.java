@@ -3,7 +3,11 @@ package ecommerce.batch.domain.transaction.report;
 
 import ecommerce.batch.dto.transaction.TransactionLog;
 import ecommerce.batch.util.DateTimeUtils;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -16,10 +20,14 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@Entity
+@Table(name = "transaction_reports")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class TransactionReport {
+public class TransactionReport implements Serializable {
 
+  @Id
   private LocalDate transactionDate;
+  @Id
   private String transactionType;
 
   private Long transactionCount;
