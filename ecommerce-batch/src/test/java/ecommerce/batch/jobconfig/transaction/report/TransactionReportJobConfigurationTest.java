@@ -3,6 +3,7 @@ package ecommerce.batch.jobconfig.transaction.report;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import ecommerce.batch.domain.transaction.report.TransactionReportRepository;
 import ecommerce.batch.jobconfig.BaseBatchIntergrationTest;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,9 @@ class TransactionReportJobConfigurationTest extends BaseBatchIntergrationTest {
   @Value("classpath:/logs/transaction.log")
   private Resource resource;
 
+  @Autowired
+  private TransactionReportRepository repository;
+
   @Test
   public void testJob(@Autowired Job transactionReportJob) throws Exception {
     jobLauncherTestUtils.setJob(transactionReportJob);
@@ -29,9 +33,7 @@ class TransactionReportJobConfigurationTest extends BaseBatchIntergrationTest {
 
     JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
 
-    assertAll(() -> assertThat(
-            jdbcTemplate.queryForObject("select count(*) from transaction_reports",
-                Integer.class)).isEqualTo(3),
+    assertAll(() -> assertThat(repository.count()).isEqualTo(3),
         () -> assertJobCompleted(jobExecution)
     );
   }

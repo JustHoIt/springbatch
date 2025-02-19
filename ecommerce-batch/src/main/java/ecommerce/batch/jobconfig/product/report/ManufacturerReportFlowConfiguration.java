@@ -1,7 +1,7 @@
 package ecommerce.batch.jobconfig.product.report;
 
 import ecommerce.batch.domain.product.report.ManufacturerReport;
-import javax.sql.DataSource;
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.job.builder.FlowBuilder;
@@ -11,10 +11,10 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.JdbcCursorItemReader;
-import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
-import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
+import org.springframework.batch.item.database.JpaCursorItemReader;
+import org.springframework.batch.item.database.JpaItemWriter;
+import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
+import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -45,28 +45,26 @@ public class ManufacturerReportFlowConfiguration {
   }
 
   @Bean
-  public JdbcCursorItemReader<ManufacturerReport> manufacturerReportReader(DataSource dataSource) {
-    return new JdbcCursorItemReaderBuilder<ManufacturerReport>()
-        .dataSource(dataSource)
+  public JpaCursorItemReader<ManufacturerReport> manufacturerReportReader(
+      EntityManagerFactory entityManagerFactory) {
+    return new JpaCursorItemReaderBuilder<ManufacturerReport>()
+        .entityManagerFactory(entityManagerFactory)
         .name("manufacturerReportReader")
-        .sql("select manufacturer,"
-            + "       count(*)                          product_count,"
-            + "       avg(sales_price)                  avg_sales_price,"
-            + "       sum(sales_price * stock_quantity) potential_sales_amount "
-            + "from products "
-            + "group by manufacturer")
-        .beanRowMapper(ManufacturerReport.class)
+        .queryString("select new ManufacturerReport(p.manufacturer,"
+            + "       count(p),"
+            + "       avg(p.salesPrice),"
+            + "       sum(p.salesPrice * p.stockQuantity)) "
+            + "from Product p "
+            + "group by p.manufacturer")
         .build();
   }
 
   @Bean
-  public JdbcBatchItemWriter<ManufacturerReport> manufacturerReportWriter(DataSource dataSource) {
-    return new JdbcBatchItemWriterBuilder<ManufacturerReport>()
-        .dataSource(dataSource)
-        .sql("insert into manufacturer_reports("
-            + "stat_date, manufacturer, product_count, avg_sales_price, potential_sales_amount) "
-            + "values (:statDate, :manufacturer, :productCount, :avgSalesPrice, :potentialSalesAmount)")
-        .beanMapped()
+  public JpaItemWriter<ManufacturerReport> manufacturerReportWriter(
+      EntityManagerFactory entityManagerFactory) {
+    return new JpaItemWriterBuilder<ManufacturerReport>()
+        .entityManagerFactory(entityManagerFactory)
+        .usePersist(true)
         .build();
   }
 
